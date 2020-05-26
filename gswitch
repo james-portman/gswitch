@@ -6,7 +6,7 @@ if [ "$(whoami)" != "root" ]; then
 fi
 
 EGPU_TEMPLATE="/etc/X11/xorg.conf.egpu"
-EGPU_BUS_ID=$(awk '/BusID/{gsub(/(PCI:|\")/," ");print$2}' < ${EGPU_TEMPLATE})
+EGPU_BUS_ID=$(awk '/BusID/{gsub(/(PCI:|")/," ");print$2}' < ${EGPU_TEMPLATE})
 XORG_DRIVER=$(awk '/Driver/{gsub("\"","");print$2}' < ${EGPU_TEMPLATE})
 
 if [ -h /etc/X11/xorg.conf ] && \
@@ -20,7 +20,7 @@ fi
 ask_reload() {
   QUESTION=$1
   echo "${QUESTION}"
-  read ANSWER
+  read -r ANSWER
   case ${ANSWER} in
     Y|y|Yes|yes)
       RELOAD="true"
@@ -41,7 +41,7 @@ do_reload() {
       = "active" ]; do
       sleep 1
     done
-    if [ ${XORG_DRIVER} = "nvidia" ]; then
+    if [ "${XORG_DRIVER}" = "nvidia" ]; then
       for DRIVER in nvidia_uvm nvidia_drm nvidia_modeset nvidia; do
         modprobe -r ${DRIVER}
       done
